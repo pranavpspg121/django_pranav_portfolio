@@ -54,3 +54,134 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+
+
+// Typed text effect
+const roles = [
+  "FULLSTACK DEVELOPER.",
+  "DJANGO DEVELOPER.",
+  "REACT DEVELOPER.",
+  "FREELANCER.",
+  "PYTHON DEVELOPER"
+];
+let ri = 0, ci = 0, deleting = false;
+const typedEl = document.getElementById("typed-text");
+
+function type() {
+  const word = roles[ri];
+  typedEl.textContent = deleting ? word.slice(0, ci - 1) : word.slice(0, ci + 1);
+  deleting ? ci-- : ci++;
+
+  if (!deleting && ci === word.length) {
+    deleting = true;
+    setTimeout(type, 1600);
+    return;
+  }
+  if (deleting && ci === 0) {
+    deleting = false;
+    ri = (ri + 1) % roles.length;
+    setTimeout(type, 400);
+    return;
+  }
+  setTimeout(type, deleting ? 40 : 90);
+}
+type();
+
+// Floating skills word cloud
+const skills = [
+  { name: "Python",      size: 32 },
+  { name: "Django",      size: 28 },
+  { name: "React",       size: 26 },
+  { name: "JavaScript",  size: 24 },
+  { name: "PostgreSQL",  size: 20 },
+  { name: "REST API",    size: 22 },
+  { name: "HTML",        size: 28 },
+  { name: "CSS",         size: 24 },
+  { name: "Git",         size: 18 },
+  { name: "Tailwind",    size: 20 },
+  { name: "Redis",       size: 16 },
+  { name: "Celery",      size: 16 },
+  { name: "Linux",       size: 16 },
+  { name: "Docker",      size: 18 },
+];
+
+const container = document.getElementById("skillsCloud");
+if (container) {
+  const W = container.offsetWidth;
+  const H = 420;
+  const words = [];
+
+  skills.forEach(s => {
+    const el = document.createElement("span");
+    el.className = "skill__word";
+    el.textContent = s.name;
+    el.style.fontSize = s.size + "px";
+    el.style.opacity = 0.5 + Math.random() * 0.5;
+    container.appendChild(el);
+
+    const w = el.offsetWidth;
+    const h = el.offsetHeight;
+
+    words.push({
+      el,
+      x: Math.random() * (W - w),
+      y: Math.random() * (H - h),
+      vx: (Math.random() - 0.5) * 0.7,
+      vy: (Math.random() - 0.5) * 0.7,
+      w, h
+    });
+  });
+
+  function animateCloud() {
+    words.forEach(word => {
+      word.x += word.vx;
+      word.y += word.vy;
+
+      if (word.x <= 0 || word.x + word.w >= W) word.vx *= -1;
+      if (word.y <= 0 || word.y + word.h >= H) word.vy *= -1;
+
+      word.x = Math.max(0, Math.min(W - word.w, word.x));
+      word.y = Math.max(0, Math.min(H - word.h, word.y));
+
+      word.el.style.transform = `translate(${word.x}px, ${word.y}px)`;
+    });
+    requestAnimationFrame(animateCloud);
+  }
+
+  animateCloud();
+}
+
+
+// email js
+// EmailJS
+emailjs.init("euhLyUFl0ytyo-wQx"); // replace this
+
+document.getElementById("contactForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const btn = document.getElementById("submitBtn");
+  btn.textContent = "Sending...";
+  btn.disabled = true;
+
+  const params = {
+    user_name:    document.getElementById("user_name").value,
+    user_email:   document.getElementById("user_email").value,
+    user_phone:   document.getElementById("user_phone").value,
+    user_message: document.getElementById("user_message").value,
+  };
+
+  emailjs.send("service_u9qfdcv", "template_lzzsult", params)
+    .then(() => {
+      btn.textContent = "Message Sent ✓";
+      btn.style.background = "#1db954";
+      document.getElementById("contactForm").reset();
+    })
+    .catch(() => {
+      btn.textContent = "Failed. Try Again.";
+      btn.style.background = "#e74c3c";
+      btn.disabled = false;
+    });
+});
+
+
