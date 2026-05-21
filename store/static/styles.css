@@ -563,3 +563,23 @@ footer {
   color: #ff6b35;        /* your orange accent on hover */
 }
 
+
+.skills {
+  position: relative;
+  overflow: hidden;
+}
+
+#skillsCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.skills .section__container {
+  position: relative;
+  z-index: 1;
+}
+

@@ -185,3 +185,63 @@ document.getElementById("contactForm").addEventListener("submit", function(e) {
 });
 
 
+// Particle Network - Skills Section
+const skillCanvas = document.getElementById("skillsCanvas");
+const skillCtx = skillCanvas.getContext("2d");
+
+function resizeSkillCanvas() {
+  skillCanvas.width = skillCanvas.offsetWidth;
+  skillCanvas.height = skillCanvas.offsetHeight;
+}
+resizeSkillCanvas();
+window.addEventListener("resize", resizeSkillCanvas);
+
+const skillParticles = [];
+const SKILL_PARTICLE_COUNT = 60;
+const SKILL_MAX_DIST = 120;
+
+for (let i = 0; i < SKILL_PARTICLE_COUNT; i++) {
+  skillParticles.push({
+    x: Math.random() * skillCanvas.width,
+    y: Math.random() * skillCanvas.height,
+    vx: (Math.random() - 0.5) * 0.4,
+    vy: (Math.random() - 0.5) * 0.4,
+    r: Math.random() * 2 + 1
+  });
+}
+
+function drawSkillParticles() {
+  skillCtx.clearRect(0, 0, skillCanvas.width, skillCanvas.height);
+
+  skillParticles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.x < 0 || p.x > skillCanvas.width) p.vx *= -1;
+    if (p.y < 0 || p.y > skillCanvas.height) p.vy *= -1;
+
+    skillCtx.beginPath();
+    skillCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    skillCtx.fillStyle = "rgba(180,180,200,0.6)";
+    skillCtx.fill();
+  });
+
+  for (let i = 0; i < skillParticles.length; i++) {
+    for (let j = i + 1; j < skillParticles.length; j++) {
+      const dx = skillParticles[i].x - skillParticles[j].x;
+      const dy = skillParticles[i].y - skillParticles[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < SKILL_MAX_DIST) {
+        skillCtx.beginPath();
+        skillCtx.moveTo(skillParticles[i].x, skillParticles[i].y);
+        skillCtx.lineTo(skillParticles[j].x, skillParticles[j].y);
+        skillCtx.strokeStyle = `rgba(180,180,200,${1 - dist / SKILL_MAX_DIST})`;
+        skillCtx.lineWidth = 0.4;
+        skillCtx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(drawSkillParticles);
+}
+drawSkillParticles();
+
+
